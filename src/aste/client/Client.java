@@ -73,6 +73,9 @@ public class Client {
                                         case "Dati":
                                             System.out.println("Errore nei dati inseriti");
                                             break;
+                                        case "Connected":
+                                            System.out.println("Errore, l'utente è già connesso");
+                                            break;
                                         default:
                                             System.out.println("Errore, si prega di riprovare");
                                             break;
@@ -121,16 +124,12 @@ public class Client {
                             case 1:{
                                 writer.writeBytes("-Richiesta|\n");
                                 String risposta;
-                                ArrayList<String> listaStringhe = new ArrayList<String>();
                                 risposta = reader.readLine();
                                 if(risposta.contains("[OK]")){
                                     int numeroRighe;
-                                    numeroRighe = Integer.parseInt(risposta.substring(risposta.indexOf(" ") + 1, risposta.indexOf(" ", risposta.indexOf(" "))));
+                                    numeroRighe = Integer.parseInt(risposta.substring(5,risposta.indexOf("|")));
                                     for(int i = 0; i < numeroRighe; i++){
-                                        listaStringhe.add(reader.readLine());
-                                    }
-                                    for(String s: listaStringhe){
-                                        System.out.println(s);
+                                        System.out.println(reader.readLine());
                                     }
                                 }else{
                                     System.out.println("Errore, si prega di riprovare");
