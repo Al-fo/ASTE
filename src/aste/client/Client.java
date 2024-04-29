@@ -17,6 +17,7 @@ public class Client {
             DataOutputStream writer = new DataOutputStream(socket.getOutputStream())) {
                 Scanner scanner = new Scanner(System.in);
                 int scelta = 0;
+                int id = -1;
                 connessione: while(true){
                     while(!loggedIn && scelta >= 0 && scelta <= 1){
                         System.out.println("0: Registrati\n1: Login\n2: Esci");
@@ -64,6 +65,7 @@ public class Client {
                                 String risposta;
                                 risposta = reader.readLine();
                                 if(risposta.contains("[OK]")){
+                                    id = Integer.parseInt(risposta.substring(4));
                                     System.out.println("Login avvenuto con successo");
                                     loggedIn = true;
                                 }else{
@@ -83,12 +85,18 @@ public class Client {
                         }
                     }
                     while(loggedIn){
-                        System.out.println("0: Logout\n1: Richiedi lista aste\n2: Crea lotto\n3: Inserisci lotto\n" + 
-                                             "4: Visualizza oggetto\n5: Effettua puntata");
-                        scelta = scanner.nextInt();
-                        scanner.nextLine();
+                        if(id == -1){
+                            System.out.println("Errore, riprovare il login");
+                            scelta = 0;
+                        }else{
+                            System.out.println("0: Logout\n1: Richiedi lista aste\n2: Crea lotto\n3: Inserisci lotto\n" + 
+                            "4: Visualizza oggetto\n5: Effettua puntata");
+                            scelta = scanner.nextInt();
+                            scanner.nextLine();
+                        }
 
                         if(scelta == 0){
+                            if(id != -1) writer.writeBytes("-Logout|" + id + "\n");
                             loggedIn = false;
                             break;
                         }

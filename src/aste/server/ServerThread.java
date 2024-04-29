@@ -54,19 +54,14 @@ public class ServerThread extends Thread{
     
                             System.out.println("dati ricevuti");
     
-                            ArrayList<String[]> listaUtenti = leggiUtenti();
-                            for(String[] s: listaUtenti){
-                                if(s[2].equalsIgnoreCase(email)){
+                            ArrayList<Utente> listaUtenti = leggiUtenti();
+                            for(Utente u: listaUtenti){
+                                if(u.getEmail().equalsIgnoreCase(email)){
                                     writer.writeBytes("[ER]Esistente\n");
                                     break switchcase;
                                 }
                             }
-                            listaUtenti.add(new String[5]);
-                            listaUtenti.get(listaUtenti.size() - 1)[0] = nome;
-                            listaUtenti.get(listaUtenti.size() - 1)[1] = cognome;
-                            listaUtenti.get(listaUtenti.size() - 1)[2] = email;
-                            listaUtenti.get(listaUtenti.size() - 1)[3] = password;
-                            listaUtenti.get(listaUtenti.size() - 1)[4] = tel;
+                            listaUtenti.add(new Utente(nome, cognome, email, password, tel));
                             writer.writeBytes("[OK]\n");
                             salvaUtenti(listaUtenti);
                             break;
@@ -87,11 +82,16 @@ public class ServerThread extends Thread{
 
                             System.out.println(email + " " + password);
 
-                            ArrayList<String[]> listaUtenti = leggiUtenti();
-                            for(String[] s: listaUtenti){
-                                if(s[2].equals(email)){
-                                    if(s[3].equals(password)){
-                                        writer.writeBytes("[OK]\n");
+                            ArrayList<Utente> listaUtenti = leggiUtenti();
+                            for(Utente u: listaUtenti){
+                                if(u.getEmail().equals(email)){
+                                    if(u.getPassword().equals(password)){
+                                        if(u.isConnected()){
+                                            writer.writeBytes("[ER] Connected");
+                                            break switchcase;
+                                        }
+                                        writer.writeBytes("[OK]" + u.getID() + "\n");
+                                        u.connect();
                                         break switchcase;
                                     }else{
                                         writer.writeBytes("[ER]Dati\n");
@@ -102,22 +102,40 @@ public class ServerThread extends Thread{
                             writer.writeBytes("[ER]Dati\n");
                             break;
                         }
+                        case "-Logout":{
+                            int id = Integer.parseInt(ricevuto.substring(comando.length() + 1));
+                            ArrayList<Utente> listaUtenti = leggiUtenti();
+                            for(Utente u: listaUtenti){
+                                if(u.getID() == id){
+                                    if(u.isConnected()){
+                                        u.disconnect();
+                                        writer.writeBytes("[OK]\n");
+                                    }else{
+                                        writer.writeBytes("");
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
         } catch (IOException ignore) {
         }
     }
 
-    private ArrayList<String[]> leggiUtenti() throws IOException{
+    private ArrayList<Utente> leggiUtenti() throws IOException{
         BufferedReader fileReader;
-        ArrayList<String[]> listaUtenti = new ArrayList<>();
+        ArrayList<String[]> listaStringhe = new ArrayList<>();
+        ArrayList<Utente> listaUtenti = new ArrayList<>();
         try{
             fileReader = new BufferedReader(new FileReader(fileUtenti + ".txt"));
             while(fileReader.ready()){
                 String[] datiLetti = fileReader.readLine().split("\\|");
-                listaUtenti.add(datiLetti);
+                listaStringhe.add(datiLetti);
             }
             fileReader.close();
+            for(String[] s: listaStringhe){
+                listaUtenti.add(new Utente(s[0], s[1], s[2], s[3], s[4], s[5]));
+            }
             return listaUtenti;
         }catch(FileNotFoundException e){
             File file = new File(fileUtenti + ".txt");
@@ -125,10 +143,10 @@ public class ServerThread extends Thread{
         }
     }
 
-    private void salvaUtenti(ArrayList<String[]> lista) throws IOException{
+    private void salvaUtenti(ArrayList<Utente> lista) throws IOException{
         BufferedWriter fileWriter = new BufferedWriter(new FileWriter(fileUtenti + ".txt"));
-        for(String[] s: lista){
-            fileWriter.write(s[0] + "|" + s[1] + "|" + s[2] + "|" + s[3] + "|" + s[4]);
+        for(Utente u: lista){
+            fileWriter.write(u.toString());
             fileWriter.newLine();
         }
         fileWriter.close();
