@@ -87,7 +87,7 @@ public class ServerThread extends Thread{
                                 if(u.getEmail().equals(email)){
                                     if(u.getPassword().equals(password)){
                                         if(u.isConnected()){
-                                            writer.writeBytes("[ER] Connected");
+                                            writer.writeBytes("[ER]Connected");
                                             break switchcase;
                                         }
                                         writer.writeBytes("[OK]" + u.getID() + "\n");
@@ -105,16 +105,21 @@ public class ServerThread extends Thread{
                         case "-Logout":{
                             int id = Integer.parseInt(ricevuto.substring(comando.length() + 1));
                             ArrayList<Utente> listaUtenti = leggiUtenti();
-                            for(Utente u: listaUtenti){
+                            for(int i = 0; i < listaUtenti.size(); i++){
+                                Utente u = listaUtenti.get(i);
                                 if(u.getID() == id){
                                     if(u.isConnected()){
                                         u.disconnect();
                                         writer.writeBytes("[OK]\n");
+                                        break switchcase;
                                     }else{
-                                        writer.writeBytes("");
+                                        writer.writeBytes("[ER]Connesso\n");
+                                        break switchcase;
                                     }
                                 }
                             }
+                            writer.writeBytes("[ER]Utente\n");
+                            break;
                         }
                     }
                 }
@@ -134,7 +139,7 @@ public class ServerThread extends Thread{
             }
             fileReader.close();
             for(String[] s: listaStringhe){
-                listaUtenti.add(new Utente(s[0], s[1], s[2], s[3], s[4], s[5]));
+                listaUtenti.add(new Utente(s[0], s[1], s[2], s[3], s[4], s[5], (s[6].equals("1"))));
             }
             return listaUtenti;
         }catch(FileNotFoundException e){

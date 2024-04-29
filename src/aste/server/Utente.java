@@ -21,14 +21,14 @@ public class Utente {
         connected = false;
     }
 
-    public Utente(String ID, String nome, String cognome, String email, String password, String telefono){
+    public Utente(String ID, String nome, String cognome, String email, String password, String telefono, boolean connected){
         this.ID = Integer.parseInt(ID);
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
         this.password = password;
         this.telefono = telefono;
-        connected = false;
+        this.connected = connected;
     }
 
     public int getID() {
@@ -68,7 +68,7 @@ public class Utente {
     }
     @Override
     public String toString() {
-        return ID + "|" + nome + "|" + cognome + "|" + email + "|" + password + "|" + telefono;
+        return ID + "|" + nome + "|" + cognome + "|" + email + "|" + password + "|" + telefono + "|" + (isConnected()? "1":"0");
     }
 
 }

@@ -96,8 +96,25 @@ public class Client {
                         }
 
                         if(scelta == 0){
-                            if(id != -1) writer.writeBytes("-Logout|" + id + "\n");
-                            loggedIn = false;
+                            disconnessione:{
+                                if(id != -1){
+                                    writer.writeBytes("-Logout|" + id + "\n");
+                                    String risposta = reader.readLine();
+                                    if(risposta.contains("[OK]")){
+                                        System.out.println("Logout avvenuto con successo");
+                                    }else{
+                                        switch (risposta.substring(4)) {
+                                            case "Connesso": case "Utente":
+                                                System.out.println("Pare che tu non sia connesso");
+                                                break disconnessione;
+                                            default:
+                                                System.out.println("è avvenuto un problema si prega di riprovare");
+                                                break disconnessione;
+                                        }
+                                    }
+                                }
+                                loggedIn = false;
+                            }
                             break;
                         }
                         switch(scelta){
