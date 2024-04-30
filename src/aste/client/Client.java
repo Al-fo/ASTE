@@ -122,12 +122,17 @@ public class Client {
                         }
                         switch(scelta){
                             case 1:{
-                                writer.writeBytes("-Richiesta|\n");
+                                writer.writeBytes("-Richiesta|" + id + "\n");
                                 String risposta;
                                 risposta = reader.readLine();
                                 if(risposta.contains("[OK]")){
                                     int numeroRighe;
                                     numeroRighe = Integer.parseInt(risposta.substring(5,risposta.indexOf("|")));
+                                    if(numeroRighe == -1){
+                                        System.out.println("Errore, " + risposta.substring(risposta.indexOf("|") + 1));
+                                        id = -1;
+                                        break;
+                                    }
                                     for(int i = 0; i < numeroRighe; i++){
                                         System.out.println(reader.readLine());
                                     }

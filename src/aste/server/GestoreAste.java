@@ -91,6 +91,17 @@ public class GestoreAste implements Serializable{
         return stringa;
     }
 
+    public void aggiungiLotto(int idAsta, Lotto lotto) throws IOException{
+        for(int i = 0; i < aste.size(); i++){
+            if(aste.get(i).getID() == idAsta){
+                Asta a = aste.get(i);
+                a.aggiungiLotto(lotto);
+                return;
+            }
+        }
+        throw new IOException("Asta non presente");
+    }
+
     public void serializza(){
         try {
             ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("aste.bin"));

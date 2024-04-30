@@ -21,6 +21,9 @@ public class ServerThread extends Thread{
     public ServerThread(Socket socket){
         this.socket = socket;
         gestoreAste = new GestoreAste();
+        gestoreAste.deserializza();
+        gestoreAste.creaAsta();
+        //gestoreAste.
     }
 
     @Override
@@ -110,6 +113,7 @@ public class ServerThread extends Thread{
                                 if(u.getID() == id){
                                     if(u.isConnected()){
                                         u.disconnect();
+                                        listaUtenti.set(i,u);
                                         writer.writeBytes("[OK]\n");
                                         break switchcase;
                                     }else{
@@ -120,6 +124,20 @@ public class ServerThread extends Thread{
                             }
                             writer.writeBytes("[ER]Utente\n");
                             break;
+                        }
+                        case "-Richiesta":{
+                            int id = Integer.parseInt(ricevuto.substring(comando.length() + 1));
+                            ArrayList<Utente> listaUtenti = leggiUtenti();
+                            for(int i = 0; i < listaUtenti.size(); i++){
+                                Utente u = listaUtenti.get(i);
+                                if(u.getID() == id){
+                                    if(!u.isConnected()){
+                                        writer.writeBytes("-1|Non Connesso\n");
+                                        break switchcase;
+                                    }
+                                    writer.writeBytes(gestoreAste.toString());
+                                }
+                            }
                         }
                     }
                 }
