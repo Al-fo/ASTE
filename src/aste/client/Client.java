@@ -127,17 +127,20 @@ public class Client {
                                 risposta = reader.readLine();
                                 if(risposta.contains("[OK]")){
                                     int numeroRighe;
-                                    numeroRighe = Integer.parseInt(risposta.substring(5,risposta.indexOf("|")));
-                                    if(numeroRighe == -1){
-                                        System.out.println("Errore, " + risposta.substring(risposta.indexOf("|") + 1));
-                                        id = -1;
-                                        break;
-                                    }
+                                    numeroRighe = Integer.parseInt(risposta.substring(4,risposta.indexOf("|")));
                                     for(int i = 0; i < numeroRighe; i++){
                                         System.out.println(reader.readLine());
                                     }
                                 }else{
-                                    System.out.println("Errore, si prega di riprovare");
+                                    switch (risposta.substring(4)) {
+                                        case "Non connesso":
+                                            System.out.println("Errore, connessione scaduta");
+                                            id = -1;
+                                            break;
+                                    
+                                        default:
+                                            break;
+                                    }
                                 }
                                 break;
                             }

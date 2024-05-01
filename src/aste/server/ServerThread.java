@@ -132,10 +132,10 @@ public class ServerThread extends Thread{
                                 Utente u = listaUtenti.get(i);
                                 if(u.getID() == id){
                                     if(!u.isConnected()){
-                                        writer.writeBytes("-1|Non Connesso\n");
+                                        writer.writeBytes("[ER]Non connesso\n");
                                         break switchcase;
                                     }
-                                    writer.writeBytes(gestoreAste.toString());
+                                    writer.writeBytes("[OK]"+gestoreAste.toString()+"\n");
                                 }
                             }
                         }
