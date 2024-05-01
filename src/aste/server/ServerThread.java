@@ -9,21 +9,27 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import aste.Lotto;
+import aste.Oggetto;
+import aste.ThreadMulticast;
+import aste.server.GestoreAste.Asta;
+
 public class ServerThread extends Thread{
-    private static GestoreAste gestoreAste;
     private Socket socket;
     private String fileUtenti = "utenti";
+    private boolean admin;
 
-    public ServerThread(Socket socket){
+    public ServerThread(Socket socket) throws IOException{
         this.socket = socket;
-        gestoreAste = new GestoreAste();
-        gestoreAste.deserializza();
-        gestoreAste.creaAsta();
-        //gestoreAste.
     }
 
     @Override
@@ -86,15 +92,30 @@ public class ServerThread extends Thread{
                             System.out.println(email + " " + password);
 
                             ArrayList<Utente> listaUtenti = leggiUtenti();
-                            for(Utente u: listaUtenti){
+                            for(int i = 0; i < listaUtenti.size(); i++){
+                                Utente u = listaUtenti.get(i);
                                 if(u.getEmail().equals(email)){
                                     if(u.getPassword().equals(password)){
                                         if(u.isConnected()){
-                                            writer.writeBytes("[ER]Connected");
+                                            u.disconnect();
+                                            writer.writeBytes("[ER]Connected\n");
+                                            listaUtenti.set(i,u);
+                                            salvaUtenti(listaUtenti);
                                             break switchcase;
                                         }
-                                        writer.writeBytes("[OK]" + u.getID() + "\n");
-                                        u.connect();
+                                        if(u.isAdmin()){
+                                            admin = true;
+                                            writer.writeBytes("[AD]" + u.getID() + "\n");
+                                            u.connect();
+                                            listaUtenti.set(i,u);
+                                            salvaUtenti(listaUtenti);
+                                        }else{
+                                            admin = false;
+                                            writer.writeBytes("[OK]" + u.getID() + "\n");
+                                            u.connect();
+                                            listaUtenti.set(i,u);
+                                            salvaUtenti(listaUtenti);
+                                        }
                                         break switchcase;
                                     }else{
                                         writer.writeBytes("[ER]Dati\n");
@@ -115,6 +136,7 @@ public class ServerThread extends Thread{
                                         u.disconnect();
                                         listaUtenti.set(i,u);
                                         writer.writeBytes("[OK]\n");
+                                        salvaUtenti(listaUtenti);
                                         break switchcase;
                                     }else{
                                         writer.writeBytes("[ER]Connesso\n");
@@ -135,7 +157,171 @@ public class ServerThread extends Thread{
                                         writer.writeBytes("[ER]Non connesso\n");
                                         break switchcase;
                                     }
-                                    writer.writeBytes("[OK]"+gestoreAste.toString()+"\n");
+                                    writer.writeBytes("[OK]"+Server.gestoreAste.toString()+"\n");
+                                    break switchcase;
+                                }
+                            }
+                            writer.writeBytes("[ER]Errore\n");
+                            break;
+                        }
+                        case "-Inserimento":{
+                            int id = Integer.parseInt(ricevuto.substring(comando.length() + 1));
+                            ArrayList<Utente> listaUtenti = leggiUtenti();
+                            for(Utente u: listaUtenti){
+                                if(u.getID() == id){
+                                    if(!u.isConnected()){
+                                        writer.writeBytes("[ER]Non connesso\n");
+                                        break switchcase;
+                                    }
+                                    writer.writeBytes("[OK]\n");
+                                    ricevuto = reader.readLine();
+
+                                    int quantitaOggetti = Integer.parseInt(ricevuto.split("\\|")[0]);
+                                    int idAstaInCuiInserire = Integer.parseInt(ricevuto.split("\\|")[1]);
+
+                                    System.out.println(quantitaOggetti + "" + idAstaInCuiInserire);
+
+                                    if(quantitaOggetti > 4){
+                                        writer.writeBytes("[ER]Troppi oggetti\n");
+                                        break switchcase;
+                                    }
+                                    if(idAstaInCuiInserire >= Server.gestoreAste.quantitaAste()){
+                                        writer.writeBytes("[ER]Id asta errato\n");
+                                        break switchcase;
+                                    }
+                                    try{
+                                        if(!Server.gestoreAste.getAsta(idAstaInCuiInserire).isAperta()){
+                                            writer.writeBytes("[ER]Asta chiusa\n");
+                                            break switchcase;
+                                        }
+                                    }catch(IOException e){
+                                        writer.writeBytes("[ER]Id asta errato\n");
+                                        break switchcase;
+                                    }
+                                    writer.writeBytes("[OK]\n");
+
+                                    Oggetto[] oggetti = new Oggetto[quantitaOggetti];
+
+                                    for(int i = 0; i < quantitaOggetti; i++){
+                                        ricevuto = reader.readLine();
+                                        int categoria = Integer.parseInt(ricevuto.split("\\|")[0]);
+                                        String nome = ricevuto.split("\\|")[1];
+                                        String desc = ricevuto.split("\\|")[2];
+                                        try{
+                                            oggetti[i] = new Oggetto(categoria, nome, desc);
+                                        }catch(IOException e){
+                                            writer.writeBytes("[ER]Categoria non valida\n");
+                                            break switchcase;
+                                        }
+                                    }
+                                    writer.writeBytes("[OK]\n");
+
+                                    ricevuto = reader.readLine();
+
+                                    String nome = ricevuto.split("\\|")[0];
+                                    double prezzoBase = Double.parseDouble(ricevuto.split("\\|")[1]);
+                                    double rilancioMinimo = Double.parseDouble(ricevuto.split("\\|")[2]);
+
+                                    System.out.println(nome + prezzoBase + rilancioMinimo);
+
+                                    try{
+                                        Lotto l = new Lotto(nome, prezzoBase, rilancioMinimo);
+                                        l.inserisciProdotti(oggetti);
+                                        Server.gestoreAste.aggiungiLotto(idAstaInCuiInserire, l);
+                                        writer.writeBytes("[OK]\n");
+                                        Server.gestoreAste.serializza();
+                                    }catch(UnknownHostException e){
+                                        writer.writeBytes("[ER]errore\n");
+                                    }catch(IOException e){
+                                        writer.writeBytes("[ER]Asta non trovata\n");
+                                    }
+
+                                    break switchcase;
+                                }
+                            }
+                            writer.writeBytes("[ER]errore\n");
+                            break switchcase;
+                        }
+                        case "-Punta":{
+                            int id = Integer.parseInt(ricevuto.substring(comando.length() + 1));
+                            ArrayList<Utente> listaUtenti = leggiUtenti();
+                            for(Utente u: listaUtenti){
+                                if(u.getID() == id){
+                                    if(!u.isConnected()){
+                                        writer.writeBytes("[ER]Non connesso\n");
+                                        break switchcase;
+                                    }
+                                    writer.writeBytes("[OK]\n");
+                                    ricevuto = reader.readLine();
+                                    int idLotto = Integer.parseInt(ricevuto.split("\\|")[0]);
+                                    int idAsta = Integer.parseInt(ricevuto.split("\\|")[1]);
+                                    double rilancio = Double.parseDouble(ricevuto.split("\\|")[2]);
+                                    try{
+                                        Asta a = Server.gestoreAste.getAsta(idAsta);
+                                        Lotto l = a.getLotto(idLotto);
+                                        double valoreAttuale = l.getValoreAttuale() + rilancio;
+                                        try{
+                                            l.effettuaRilancio(valoreAttuale, new String(u.getNome() + " " +  u.getCognome()));
+                                        }catch(IOException e){
+                                            writer.writeBytes("[ER]" + e.getMessage() + "\n");
+                                            break switchcase;
+                                        }
+                                        a.replaceLotto(l, idLotto);
+                                        Server.gestoreAste.replace(a, idAsta);
+                                        scriviAggiornamento(rilancio, valoreAttuale, u, l.getIndirizzoMulticast().toString());
+                                        Server.gestoreAste.serializza();
+                                        writer.writeBytes("[OK]\n");
+                                    }catch(IOException e){
+                                        writer.writeBytes("[ER]AstaLotto\n");
+                                        break switchcase;
+                                    }
+                                    break switchcase;
+                                }
+                            }
+                            writer.writeBytes("[ER]Utente non presente\n");
+                            break switchcase;
+                        }
+                        case "-Crea":{
+                            int id = Integer.parseInt(ricevuto.substring(comando.length() + 1));
+                            ArrayList<Utente> listaUtenti = leggiUtenti();
+                            for(Utente u: listaUtenti){
+                                if(u.getID() == id){
+                                    if(!u.isAdmin()){
+                                        writer.writeBytes("[ER]NoAdmin\n");
+                                        break switchcase;
+                                    }
+                                    if(!u.isConnected()){
+                                        writer.writeBytes("[ER]Non connesso\n");
+                                        break switchcase;
+                                    }
+                                    Server.gestoreAste.creaAsta();
+                                    writer.writeBytes("[OK]\n");
+                                    break switchcase;
+                                }
+                            }
+                        }
+                        case "-Chiudi":{
+                            int id = Integer.parseInt(ricevuto.substring(comando.length() + 1));
+                            ArrayList<Utente> listaUtenti = leggiUtenti();
+                            for(Utente u: listaUtenti){
+                                if(u.getID() == id){
+                                    if(!u.isAdmin()){
+                                        writer.writeBytes("[ER]NoAdmin\n");
+                                        break switchcase;
+                                    }
+                                    if(!u.isConnected()){
+                                        writer.writeBytes("[ER]Non connesso\n");
+                                        break switchcase;
+                                    }
+                                    int idAsta = Integer.parseInt(reader.readLine());
+                                    try{
+                                        Server.gestoreAste.chiudiAsta(idAsta);
+                                        writer.writeBytes("[OK]\n");
+                                        break switchcase;
+                                    }catch(IOException e){
+                                        writer.writeBytes("[ER]Asta non presente\n");
+                                        break switchcase;
+                                    }
                                 }
                             }
                         }
@@ -157,11 +343,12 @@ public class ServerThread extends Thread{
             }
             fileReader.close();
             for(String[] s: listaStringhe){
-                listaUtenti.add(new Utente(s[0], s[1], s[2], s[3], s[4], s[5], (s[6].equals("1"))));
+                listaUtenti.add(new Utente(s[0], s[1], s[2], s[3], s[4], s[5], (s[6].equals("1")), (s[7].equals("1"))));
             }
             return listaUtenti;
         }catch(FileNotFoundException e){
             File file = new File(fileUtenti + ".txt");
+            file.createNewFile();
             return listaUtenti;
         }
     }
@@ -173,5 +360,14 @@ public class ServerThread extends Thread{
             fileWriter.newLine();
         }
         fileWriter.close();
+    }
+
+    private void scriviAggiornamento(double rilancio,double nuovoValore, Utente u, String indirizzo) throws IOException{
+        DatagramSocket socket = new DatagramSocket();
+        InetAddress gruppoMulticast = InetAddress.getByName(indirizzo.substring(1));
+        byte[] messaggio = ("Rilancio di " + rilancio + " effettuato da " + u.getNome() + " " + u.getCognome() + ", Nuovo valore: " + nuovoValore + "").getBytes(); 
+        DatagramPacket packet = new DatagramPacket(messaggio, messaggio.length, gruppoMulticast, 3200);
+        socket.send(packet);
+        socket.close();
     }
 }   

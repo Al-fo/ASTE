@@ -1,6 +1,9 @@
 package aste;
 
-public class Oggetto {
+import java.io.IOException;
+import java.io.Serializable;
+
+public class Oggetto implements Serializable{
     private final int ID_OGGETTO;
     private static int nextID = 0;
     private String nome, descrizione;
@@ -40,12 +43,13 @@ public class Oggetto {
     };
 
 
-    public Oggetto(int categoria, String nome, String descrizione){
+    public Oggetto(int categoria, String nome, String descrizione) throws IOException{
         ID_OGGETTO = nextID;
         nextID++;
         this.nome = nome;
         this.descrizione = descrizione;
         this.categoria = CATEGORIE.getCategoriaByValue(categoria);
+        if (this.categoria == null) throw new IOException("Categoria non valida");
     }
 
     public CATEGORIE getCategoria() {

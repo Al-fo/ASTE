@@ -21,9 +21,10 @@ import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 
 import aste.Lotto;
+import aste.Oggetto;
 
 public class GestoreAste implements Serializable{
-    private class Asta implements Serializable{
+    public class Asta implements Serializable{
         private boolean aperta;
         private final int CODICE_ASTA;
         private static int nextCodice = 0;
@@ -33,6 +34,7 @@ public class GestoreAste implements Serializable{
             CODICE_ASTA = nextCodice;
             nextCodice++;
             aperta = true;
+            lottiInAsta = new ArrayList<>();
         }
 
         public void aggiungiLotto(Lotto lotto) throws IOException{
@@ -56,13 +58,72 @@ public class GestoreAste implements Serializable{
             return lottiInAsta.size();
         }
 
+        public void replaceLotto(Lotto l, int idLotto) throws IOException{
+            for(Lotto ll: lottiInAsta){
+                if(ll.getID() == idLotto){
+                    int index = lottiInAsta.indexOf(ll);
+                    lottiInAsta.set(index, l);
+                }
+            }
+            throw new IOException("Lotto non presente");
+        }
+
+        public Lotto getLotto(int idLotto) throws IOException{
+            for(Lotto l: lottiInAsta){
+                if(l.getID() == idLotto) return l;
+            }
+            throw new IOException("Lotto non presente");
+        }
+
+        public boolean isAperta() {
+            return aperta;
+        }
+
         @Override
         public String toString() {
-            String string = CODICE_ASTA + "|" + (aperta? "1":"0") + "\n";
+            String string = "ID asta: " + CODICE_ASTA + "|Aperta: " + (aperta? "Si":"No") + "\n";
             for(Lotto l: lottiInAsta){
                 string += "\t" + l.toString() + "\n";
             }
             return string;
+        }
+
+        public void serializza(){
+            try {
+                ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("aste.bin"));
+                output.writeObject(lottiInAsta);
+                output.close();
+            } catch (FileNotFoundException e){
+                File file = new File("aste.bin");
+                try {
+                    file.createNewFile();
+                    this.serializza();
+                } catch (IOException ignore) {
+                }
+            } catch (IOException ignore) {
+            }
+        }
+    
+        public void deserializza(){
+            try {
+                ObjectInputStream input = new ObjectInputStream(new FileInputStream("aste.bin"));
+                try {
+                    Object obj = input.readObject();
+                    if(obj instanceof ArrayList<?>){
+                        ArrayList<?> a = (ArrayList<?>) obj;
+                        if(a.size() > 0){
+                            for(Object o : a){
+                                if(o instanceof Lotto)
+                                    lottiInAsta.add((Lotto) o);
+                            }
+                        }
+                    }
+                } catch (ClassNotFoundException ignore) {
+                }
+                input.close();
+            } catch (FileNotFoundException ignore) {
+            } catch (IOException ignore) {
+            }
         }
     }
     private List<Asta> aste;
@@ -70,6 +131,42 @@ public class GestoreAste implements Serializable{
     public GestoreAste(){
         aste = new ArrayList<>();
         deserializza();
+    }
+
+    public void chiudiAsta(int idAsta) throws IOException{
+        for(Asta a: aste){
+            if(a.getID() == idAsta){
+                int index = aste.indexOf(a);
+                a.chiudi();
+                aste.set(index, a);
+            }
+        }
+        throw new IOException("Asta non presente");
+    }
+
+    public void replace(Asta a, int idAsta) throws IOException{
+        for(int i = 0; i < aste.size(); i++){
+            if(aste.get(i).getID() == idAsta){
+                aste.set(i,a);
+                return;
+            }
+        }
+        throw new IOException("Id non valido");
+    }
+
+    public List<Asta> getAste() {
+        return aste;
+    }
+
+    public Asta getAsta(int idAsta) throws IOException{
+        for(int i = 0; i < aste.size(); i++){
+            if(aste.get(i).getID() == idAsta) return aste.get(i);
+        }
+        throw new IOException("Asta non presente");
+    }
+
+    public int quantitaAste(){
+        return aste.size();
     }
 
     public int creaAsta(){
@@ -91,7 +188,7 @@ public class GestoreAste implements Serializable{
         return stringa;
     }
 
-    public void aggiungiLotto(int idAsta, Lotto lotto) throws IOException{
+    public synchronized void aggiungiLotto(int idAsta, Lotto lotto) throws IOException{
         for(int i = 0; i < aste.size(); i++){
             if(aste.get(i).getID() == idAsta){
                 Asta a = aste.get(i);
@@ -115,12 +212,18 @@ public class GestoreAste implements Serializable{
             } catch (IOException ignore) {
             }
         } catch (IOException ignore) {
+            System.out.println("AAAAAA");
         }
     }
 
     public void deserializza(){
         try {
-            ObjectInputStream input = new ObjectInputStream(new FileInputStream("aste.bin"));
+            FileInputStream fileInput = null;
+            try{
+                fileInput = new FileInputStream("aste.bin");
+            }catch(IOException ignore){
+            }
+            ObjectInputStream input = new ObjectInputStream(fileInput);
             try {
                 Object obj = input.readObject();
                 if(obj instanceof ArrayList<?>){
@@ -133,6 +236,7 @@ public class GestoreAste implements Serializable{
                     }
                 }
             } catch (ClassNotFoundException ignore) {
+            }catch(IOException e){
             }
             input.close();
         } catch (FileNotFoundException ignore) {

@@ -9,6 +9,7 @@ public class Utente {
     private String password;
     private String telefono;
     private boolean connected;
+    private boolean admin;
 
     public Utente(String nome, String cognome, String email, String password, String telefono){
         ID = nextID;
@@ -19,9 +20,10 @@ public class Utente {
         this.password = password;
         this.telefono = telefono;
         connected = false;
+        admin = false;
     }
 
-    public Utente(String ID, String nome, String cognome, String email, String password, String telefono, boolean connected){
+    public Utente(String ID, String nome, String cognome, String email, String password, String telefono, boolean connected, boolean admin){
         this.ID = Integer.parseInt(ID);
         this.nome = nome;
         this.cognome = cognome;
@@ -29,6 +31,11 @@ public class Utente {
         this.password = password;
         this.telefono = telefono;
         this.connected = connected;
+        this.admin = admin;
+    }
+
+    public boolean isAdmin() {
+        return admin;
     }
 
     public int getID() {
@@ -68,7 +75,7 @@ public class Utente {
     }
     @Override
     public String toString() {
-        return ID + "|" + nome + "|" + cognome + "|" + email + "|" + password + "|" + telefono + "|" + (isConnected()? "1":"0");
+        return ID + "|" + nome + "|" + cognome + "|" + email + "|" + password + "|" + telefono + "|" + (isConnected()? "1":"0") + "|" + (admin? "1":"0");
     }
 
 }
