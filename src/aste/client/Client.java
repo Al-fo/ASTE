@@ -226,7 +226,7 @@ public class Client {
                                 scelta = 0;
                             }else{
                                 System.out.println("0: Logout\n1: Richiedi lista aste\n2: Inserisci lotto\n" + 
-                                "3: Entra gruppo lotto\n4: Esci gruppo lotto\n5: Effettua puntata");
+                                "3: Entra gruppo lotto\n4: Esci gruppo lotto\n5: Effettua rilancio");
                                 scelta = scanner.nextInt();
                                 scanner.nextLine();
                             }

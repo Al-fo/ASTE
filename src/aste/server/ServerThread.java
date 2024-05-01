@@ -12,7 +12,6 @@ import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.MulticastSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -20,7 +19,6 @@ import java.util.Arrays;
 
 import aste.Lotto;
 import aste.Oggetto;
-import aste.ThreadMulticast;
 import aste.server.GestoreAste.Asta;
 
 public class ServerThread extends Thread{

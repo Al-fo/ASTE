@@ -2,11 +2,9 @@ package aste;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.UnknownHostException;
-import java.nio.channels.MulticastChannel;
 
 public class ThreadMulticast extends Thread{
     private InetAddress indirizzo;

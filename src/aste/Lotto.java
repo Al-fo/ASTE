@@ -7,8 +7,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.naming.NoPermissionException;
-
 public class Lotto implements Serializable{
     public final int ID_LOTTO;
     private String vincitoreAttuale;
@@ -17,7 +15,6 @@ public class Lotto implements Serializable{
     private String nomeLotto;
     private List<Oggetto> oggettiCompresi;
     private InetAddress indirizzoMulticast;
-    private static final int PORTA = 3200;
     private double prezzoBase;
     private double rilancioMinimo;
 
