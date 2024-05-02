@@ -11,7 +11,7 @@ public class Lotto implements Serializable{
     public final int ID_LOTTO;
     private String vincitoreAttuale;
     private double valoreAttuale;
-    private static int nextId = 1;
+    private static int nextId;
     private String nomeLotto;
     private List<Oggetto> oggettiCompresi;
     private InetAddress indirizzoMulticast;

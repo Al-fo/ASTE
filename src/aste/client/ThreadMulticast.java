@@ -1,4 +1,4 @@
-package aste;
+package aste.client;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

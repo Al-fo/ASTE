@@ -9,8 +9,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import aste.ThreadMulticast;
-
 public class Client {
     private static int porta = 3000;
     private static boolean loggedIn = false;
@@ -193,6 +191,11 @@ public class Client {
                                             switch (risposta.substring(4)) {
                                                 case "Asta non presente":{
                                                     System.out.println("L'asta indicata non è presente");
+                                                    break;
+                                                }
+                                                case "Utente non trovato":{
+                                                    System.out.println("Errore, l'utente non è stato trovato, ripetere il login");
+                                                    id = -1;
                                                     break;
                                                 }
                                                 default:
@@ -403,7 +406,7 @@ public class Client {
                                     String risposta;
                                     risposta = reader.readLine();
                                     if(risposta.contains("[OK]")){
-                                        System.out.println("Inserisci l'id del lotto su cui rilanciare");
+                                        System.out.println("Inserisci l'id (ultimo punto) del lotto su cui rilanciare");
                                         int idLotto = scanner.nextInt();
                                         scanner.nextLine();
                                         System.out.println("Inserisci l'id dell'asta su cui si trova il lotto");

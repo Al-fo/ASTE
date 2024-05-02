@@ -17,7 +17,7 @@ public class GestoreAste implements Serializable{
     public class Asta implements Serializable{
         private boolean aperta;
         private final int CODICE_ASTA;
-        private static int nextCodice = 0;
+        private static int nextCodice;
         private List<Lotto> lottiInAsta;
 
         public Asta(){
@@ -77,44 +77,6 @@ public class GestoreAste implements Serializable{
             }
             return string;
         }
-
-        public void serializza(){
-            try {
-                ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("aste.bin"));
-                output.writeObject(lottiInAsta);
-                output.close();
-            } catch (FileNotFoundException e){
-                File file = new File("aste.bin");
-                try {
-                    file.createNewFile();
-                    this.serializza();
-                } catch (IOException ignore) {
-                }
-            } catch (IOException ignore) {
-            }
-        }
-    
-        public void deserializza(){
-            try {
-                ObjectInputStream input = new ObjectInputStream(new FileInputStream("aste.bin"));
-                try {
-                    Object obj = input.readObject();
-                    if(obj instanceof ArrayList<?>){
-                        ArrayList<?> a = (ArrayList<?>) obj;
-                        if(a.size() > 0){
-                            for(Object o : a){
-                                if(o instanceof Lotto)
-                                    lottiInAsta.add((Lotto) o);
-                            }
-                        }
-                    }
-                } catch (ClassNotFoundException ignore) {
-                }
-                input.close();
-            } catch (FileNotFoundException ignore) {
-            } catch (IOException ignore) {
-            }
-        }
     }
     private List<Asta> aste;
 
@@ -129,6 +91,7 @@ public class GestoreAste implements Serializable{
                 int index = aste.indexOf(a);
                 a.chiudi();
                 aste.set(index, a);
+                return;
             }
         }
         throw new IOException("Asta non presente");
@@ -202,7 +165,6 @@ public class GestoreAste implements Serializable{
             } catch (IOException ignore) {
             }
         } catch (IOException ignore) {
-            System.out.println("AAAAAA");
         }
     }
 
@@ -222,6 +184,7 @@ public class GestoreAste implements Serializable{
                         for(Object o : a){
                             if(o instanceof Asta)
                                 aste.add((Asta) o);
+                                System.out.println("Asta aggiunta " + o.toString());
                         }
                     }
                 }

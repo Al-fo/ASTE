@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 public class Oggetto implements Serializable{
     private final int ID_OGGETTO;
-    private static int nextID = 0;
+    private static int nextID;
     private String nome, descrizione;
     private CATEGORIE categoria;
     enum CATEGORIE{

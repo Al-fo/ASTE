@@ -1,3 +1,3 @@
 -2|Lorenzo|Gori|lorenzogori@gmail.com|password|3345566756|1|1
-0|Maru|Sherif|maru@gmail.com|password|43234234|1|0
-0|Adnaan|Yuma|yuma@gmail.com|password|2312314|1|0
+0|Maru|Sherif|maru@gmail.com|password|43234234|0|0
+0|Adnaan|Yuma|yuma@gmail.com|password|2312314|0|0

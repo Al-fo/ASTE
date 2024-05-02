@@ -293,6 +293,7 @@ public class ServerThread extends Thread{
                                         break switchcase;
                                     }
                                     Server.gestoreAste.creaAsta();
+                                    Server.gestoreAste.serializza();
                                     writer.writeBytes("[OK]\n");
                                     break switchcase;
                                 }
@@ -301,6 +302,7 @@ public class ServerThread extends Thread{
                         case "-Chiudi":{
                             int id = Integer.parseInt(ricevuto.substring(comando.length() + 1));
                             ArrayList<Utente> listaUtenti = leggiUtenti();
+                            System.out.println(id);
                             for(Utente u: listaUtenti){
                                 if(u.getID() == id){
                                     if(!u.isAdmin()){
@@ -311,9 +313,11 @@ public class ServerThread extends Thread{
                                         writer.writeBytes("[ER]Non connesso\n");
                                         break switchcase;
                                     }
+                                    writer.writeBytes("[OK]\n");
                                     int idAsta = Integer.parseInt(reader.readLine());
                                     try{
                                         Server.gestoreAste.chiudiAsta(idAsta);
+                                        Server.gestoreAste.serializza();
                                         writer.writeBytes("[OK]\n");
                                         break switchcase;
                                     }catch(IOException e){
@@ -322,6 +326,8 @@ public class ServerThread extends Thread{
                                     }
                                 }
                             }
+                            writer.writeBytes("[ER]Utente non trovato");
+                            break switchcase;
                         }
                     }
                 }
