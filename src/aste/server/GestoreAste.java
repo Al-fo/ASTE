@@ -1,9 +1,13 @@
 package aste.server;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -11,20 +15,35 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import aste.Lotto;
-
 public class GestoreAste implements Serializable{
+	final static long serialVersionUID = 319310233;
     public class Asta implements Serializable{
+        final static long serialVersionUID = 319310233;
         private boolean aperta;
         private final int CODICE_ASTA;
-        private static int nextCodice;
         private List<Lotto> lottiInAsta;
 
         public Asta(){
-            CODICE_ASTA = nextCodice;
-            nextCodice++;
+            int nextCodice = Integer.MAX_VALUE;
+            String leggi = "";
+            try {
+                BufferedReader readerFile = new BufferedReader(new FileReader("nextCodici.txt"));
+                leggi = readerFile.readLine();
+                nextCodice = Integer.parseInt(leggi.split("\\|")[0]);
+                readerFile.close();
+                
+            } catch (IOException ignore){
+            }
             aperta = true;
             lottiInAsta = new ArrayList<>();
+            CODICE_ASTA = nextCodice;
+            try {
+                leggi = nextCodice++ + (leggi.substring(1));
+                BufferedWriter writerFile = new BufferedWriter(new FileWriter("nextCodici.txt"));
+                writerFile.write(leggi);
+                writerFile.close();
+            } catch (IOException ignore) {
+            }
         }
 
         public void aggiungiLotto(Lotto lotto) throws IOException{
@@ -82,7 +101,6 @@ public class GestoreAste implements Serializable{
 
     public GestoreAste(){
         aste = new ArrayList<>();
-        deserializza();
     }
 
     public void chiudiAsta(int idAsta) throws IOException{
@@ -189,11 +207,15 @@ public class GestoreAste implements Serializable{
                     }
                 }
             } catch (ClassNotFoundException ignore) {
+                System.err.println(ignore.getMessage());
             }catch(IOException e){
+                System.out.println(e.getMessage());
             }
             input.close();
         } catch (FileNotFoundException ignore) {
+            System.err.println(ignore.getMessage());
         } catch (IOException ignore) {
+            System.err.println(ignore.getMessage());
         }
     }
 }

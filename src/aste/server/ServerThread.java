@@ -17,8 +17,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import aste.Lotto;
-import aste.Oggetto;
 import aste.server.GestoreAste.Asta;
 
 public class ServerThread extends Thread{

@@ -1,9 +1,10 @@
-package aste;
+package aste.server;
 
 import java.io.IOException;
 import java.io.Serializable;
 
 public class Oggetto implements Serializable{
+    final static long serialVersionUID = 319310233;
     private final int ID_OGGETTO;
     private static int nextID;
     private String nome, descrizione;
