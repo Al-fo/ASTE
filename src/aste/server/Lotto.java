@@ -1,7 +1,9 @@
 package aste.server;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -21,9 +23,25 @@ public class Lotto implements Serializable{
     private double rilancioMinimo;
 
     public Lotto(String nomeLotto, double prezzoBase, double rilancioMinimo) throws UnknownHostException{
-        BufferedReader readerFile = new BufferedReader(new FileReader("nextCodici.txt"));
-        ID_LOTTO = Server.nextCodiceLotti;
-        Server.nextCodiceLotti++;
+        int nextCodice = Integer.MAX_VALUE;
+        BufferedWriter writer;
+        BufferedReader reader;
+
+        try{
+            reader = new BufferedReader(new FileReader("nextCodici.txt"));
+            int codiceAsta = Integer.parseInt(reader.readLine());
+            nextCodice = Integer.parseInt(reader.readLine());
+            int codiceOggetto = Integer.parseInt(reader.readLine());
+            reader.close();
+            writer = new BufferedWriter(new FileWriter("nextCodici.txt"));
+            writer.write(Integer.toString(codiceAsta) + "\n");
+            writer.append(Integer.toString(nextCodice++) + "\n");
+            writer.append(Integer.toString(codiceOggetto));
+            writer.close();
+        }catch(IOException ignore){
+        }
+
+        ID_LOTTO = nextCodice;
         indirizzoMulticast = InetAddress.getByName("224.0.0." + ID_LOTTO);
         this.nomeLotto = nomeLotto;
         this.prezzoBase = prezzoBase;

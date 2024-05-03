@@ -25,25 +25,26 @@ public class GestoreAste implements Serializable{
 
         public Asta(){
             int nextCodice = Integer.MAX_VALUE;
-            String leggi = "";
-            try {
-                BufferedReader readerFile = new BufferedReader(new FileReader("nextCodici.txt"));
-                leggi = readerFile.readLine();
-                nextCodice = Integer.parseInt(leggi.split("\\|")[0]);
-                readerFile.close();
-                
-            } catch (IOException ignore){
+            BufferedWriter writer;
+            BufferedReader reader;
+
+            try{
+                reader = new BufferedReader(new FileReader("nextCodici.txt"));
+                nextCodice = Integer.parseInt(reader.readLine());
+                int codiceLotto = Integer.parseInt(reader.readLine());
+                int codiceOggetto = Integer.parseInt(reader.readLine());
+                reader.close();
+                writer = new BufferedWriter(new FileWriter("nextCodici.txt"));
+                writer.write(Integer.toString(nextCodice++) + "\n");
+                writer.append(Integer.toString(codiceLotto) + "\n");
+                writer.append(Integer.toString(codiceOggetto));
+                writer.close();
+            }catch(IOException ignore){
             }
+            
             aperta = true;
             lottiInAsta = new ArrayList<>();
             CODICE_ASTA = nextCodice;
-            try {
-                leggi = nextCodice++ + (leggi.substring(1));
-                BufferedWriter writerFile = new BufferedWriter(new FileWriter("nextCodici.txt"));
-                writerFile.write(leggi);
-                writerFile.close();
-            } catch (IOException ignore) {
-            }
         }
 
         public void aggiungiLotto(Lotto lotto) throws IOException{

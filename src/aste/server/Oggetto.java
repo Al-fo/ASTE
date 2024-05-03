@@ -1,12 +1,15 @@
 package aste.server;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 
 public class Oggetto implements Serializable{
     final static long serialVersionUID = 319310233;
     private final int ID_OGGETTO;
-    private static int nextID;
     private String nome, descrizione;
     private CATEGORIE categoria;
     enum CATEGORIE{
@@ -45,8 +48,25 @@ public class Oggetto implements Serializable{
 
 
     public Oggetto(int categoria, String nome, String descrizione) throws IOException{
-        ID_OGGETTO = nextID;
-        nextID++;
+        int nextCodice = Integer.MAX_VALUE;
+        BufferedWriter writer;
+        BufferedReader reader;
+
+        try{
+            reader = new BufferedReader(new FileReader("nextCodici.txt"));
+            int codiceAsta = Integer.parseInt(reader.readLine());
+            int codiceLotto = Integer.parseInt(reader.readLine());
+            nextCodice = Integer.parseInt(reader.readLine());
+            reader.close();
+            writer = new BufferedWriter(new FileWriter("nextCodici.txt"));
+            writer.write(Integer.toString(codiceAsta) + "\n");
+            writer.append(Integer.toString(codiceLotto) + "\n");
+            writer.append(Integer.toString(nextCodice++));
+            writer.close();
+        }catch(IOException ignore){
+        }
+
+        ID_OGGETTO = nextCodice;
         this.nome = nome;
         this.descrizione = descrizione;
         this.categoria = CATEGORIE.getCategoriaByValue(categoria);
