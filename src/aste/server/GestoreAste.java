@@ -35,7 +35,7 @@ public class GestoreAste implements Serializable{
                 int codiceOggetto = Integer.parseInt(reader.readLine());
                 reader.close();
                 writer = new BufferedWriter(new FileWriter("nextCodici.txt"));
-                writer.write(Integer.toString(nextCodice++) + "\n");
+                writer.write(Integer.toString((nextCodice + 1)) + "\n");
                 writer.append(Integer.toString(codiceLotto) + "\n");
                 writer.append(Integer.toString(codiceOggetto));
                 writer.close();

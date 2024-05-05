@@ -27,7 +27,6 @@ public class ThreadMulticast extends Thread{
                 System.out.println("Messaggio da " + packet.getAddress().toString() + ": " + msg);
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

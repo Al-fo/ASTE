@@ -22,7 +22,6 @@ import aste.server.GestoreAste.Asta;
 public class ServerThread extends Thread{
     private Socket socket;
     private String fileUtenti = "utenti";
-    private boolean admin;
 
     public ServerThread(Socket socket) throws IOException{
         this.socket = socket;
@@ -100,13 +99,11 @@ public class ServerThread extends Thread{
                                             break switchcase;
                                         }
                                         if(u.isAdmin()){
-                                            admin = true;
                                             writer.writeBytes("[AD]" + u.getID() + "\n");
                                             u.connect();
                                             listaUtenti.set(i,u);
                                             salvaUtenti(listaUtenti);
                                         }else{
-                                            admin = false;
                                             writer.writeBytes("[OK]" + u.getID() + "\n");
                                             u.connect();
                                             listaUtenti.set(i,u);

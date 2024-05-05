@@ -98,6 +98,7 @@ public class Client {
                         while(loggedIn){
                             if(id == -1){
                                 System.out.println("Errore, riprovare il login");
+                                admin = false;
                                 scelta = 0;
                             }else{
                                 System.out.println("0: Logout\n1: Richiedi lista aste\n" + "2: Crea asta\n" + "3: Chiudi asta");
@@ -112,6 +113,7 @@ public class Client {
                                         String risposta = reader.readLine();
                                         if(risposta.contains("[OK]")){
                                             System.out.println("Logout avvenuto con successo");
+                                            admin = false;
                                         }else{
                                             switch (risposta.substring(4)) {
                                                 case "Connesso": case "Utente":

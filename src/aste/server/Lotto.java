@@ -35,14 +35,14 @@ public class Lotto implements Serializable{
             reader.close();
             writer = new BufferedWriter(new FileWriter("nextCodici.txt"));
             writer.write(Integer.toString(codiceAsta) + "\n");
-            writer.append(Integer.toString(nextCodice++) + "\n");
+            writer.append(Integer.toString((nextCodice + 1)) + "\n");
             writer.append(Integer.toString(codiceOggetto));
             writer.close();
         }catch(IOException ignore){
         }
 
         ID_LOTTO = nextCodice;
-        indirizzoMulticast = InetAddress.getByName("224.0.0." + ID_LOTTO);
+        indirizzoMulticast = InetAddress.getByName("127.0.0." + ID_LOTTO);
         this.nomeLotto = nomeLotto;
         this.prezzoBase = prezzoBase;
         this.rilancioMinimo = rilancioMinimo;

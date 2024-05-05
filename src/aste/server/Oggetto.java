@@ -61,7 +61,7 @@ public class Oggetto implements Serializable{
             writer = new BufferedWriter(new FileWriter("nextCodici.txt"));
             writer.write(Integer.toString(codiceAsta) + "\n");
             writer.append(Integer.toString(codiceLotto) + "\n");
-            writer.append(Integer.toString(nextCodice++));
+            writer.append(Integer.toString((nextCodice + 1)));
             writer.close();
         }catch(IOException ignore){
         }
