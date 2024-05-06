@@ -402,6 +402,7 @@ public class Client {
                                         }
                                         System.out.println("Errore, non fai parte del gruppo voluto");
                                     }
+                                    break;
                                 }
                                 case 5:{
                                     writer.writeBytes("-Punta|" + id + "\n");
