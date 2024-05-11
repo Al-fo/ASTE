@@ -11,7 +11,7 @@ import java.net.ServerSocket;
 import java.util.ArrayList;
 
 public class Server {
-    public final static String fileUtenti = "utenti";
+    public final static String fileUtenti = "src\\utenti";
     public static GestoreAste gestoreAste = new GestoreAste();
     public final static int porta = 3000;
     public static void main(String[] args) {
@@ -26,7 +26,7 @@ public class Server {
         }
     }
 
-    static void resettaUtenti(){
+    private static void resettaUtenti(){
         try {
             ArrayList<Utente> listaUtenti = leggiUtenti();
             for(int index = 0; index < listaUtenti.size(); index++){

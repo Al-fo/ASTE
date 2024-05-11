@@ -362,10 +362,10 @@ public class ServerThread extends Thread{
         fileWriter.close();
     }
 
-    private void scriviAggiornamento(double rilancio,double nuovoValore, Utente u, String indirizzo) throws IOException{
+    private void scriviAggiornamento(double rilancio,double nuovoValore, Utente utente, String indirizzo) throws IOException{
         DatagramSocket socket = new DatagramSocket();
         InetAddress gruppoMulticast = InetAddress.getByName(indirizzo.substring(1));
-        byte[] messaggio = ("Rilancio di " + rilancio + " effettuato da " + u.getNome() + " " + u.getCognome() + ", Nuovo valore: " + nuovoValore + "").getBytes(); 
+        byte[] messaggio = ("Rilancio di " + rilancio + " effettuato da " + utente.getNome() + " " + utente.getCognome() + ", Nuovo valore: " + nuovoValore + "").getBytes(); 
         DatagramPacket packet = new DatagramPacket(messaggio, messaggio.length, gruppoMulticast, 3200);
         socket.send(packet);
         socket.close();

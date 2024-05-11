@@ -13,15 +13,9 @@ public class Oggetto implements Serializable{
     private String nome, descrizione;
     private CATEGORIE categoria;
     enum CATEGORIE{
-        ELETTRONICA(0), ABBIGLIAMENTO(1), ELETTRODOMESTICI(2),
-        BAMBINI(3), GIARDINAGGIO(4), SCOLASTICO(5), LAVORO(6), 
-        CUCINA(7);
-
-        int valore;
-        
-        private CATEGORIE(int valore){
-            this.valore = valore;
-        }
+        ELETTRONICA, ABBIGLIAMENTO, ELETTRODOMESTICI,
+        BAMBINI, GIARDINAGGIO, SCOLASTICO, LAVORO, 
+        CUCINA;
 
         public static CATEGORIE getCategoriaByValue(int value){
             switch(value){
@@ -53,12 +47,12 @@ public class Oggetto implements Serializable{
         BufferedReader reader;
 
         try{
-            reader = new BufferedReader(new FileReader("nextCodici.txt"));
+            reader = new BufferedReader(new FileReader("src\\nextCodici.txt"));
             int codiceAsta = Integer.parseInt(reader.readLine());
             int codiceLotto = Integer.parseInt(reader.readLine());
             nextCodice = Integer.parseInt(reader.readLine());
             reader.close();
-            writer = new BufferedWriter(new FileWriter("nextCodici.txt"));
+            writer = new BufferedWriter(new FileWriter("src\\nextCodici.txt"));
             writer.write(Integer.toString(codiceAsta) + "\n");
             writer.append(Integer.toString(codiceLotto) + "\n");
             writer.append(Integer.toString((nextCodice + 1)));

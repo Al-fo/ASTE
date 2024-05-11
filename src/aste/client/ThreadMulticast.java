@@ -9,12 +9,10 @@ import java.net.UnknownHostException;
 public class ThreadMulticast extends Thread{
     private InetAddress indirizzo;
     private static final int porta = 3200;
-    private boolean working;
-    MulticastSocket socket;
+    private MulticastSocket socket;
 
     public ThreadMulticast(String indirizzo) throws UnknownHostException{
         this.indirizzo = InetAddress.getByName(indirizzo);
-        working = true;
     }
 
     @SuppressWarnings("deprecation")
@@ -24,7 +22,7 @@ public class ThreadMulticast extends Thread{
             socket = new MulticastSocket(porta);
             byte[] buffer = new byte[1024];
             socket.joinGroup(indirizzo);
-            while(working){
+            while(true){
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
                 socket.receive(packet);
                 String msg = new String(packet.getData());

@@ -29,12 +29,12 @@ public class GestoreAste implements Serializable{
             BufferedReader reader;
 
             try{
-                reader = new BufferedReader(new FileReader("nextCodici.txt"));
+                reader = new BufferedReader(new FileReader("src\\nextCodici.txt"));
                 nextCodice = Integer.parseInt(reader.readLine());
                 int codiceLotto = Integer.parseInt(reader.readLine());
                 int codiceOggetto = Integer.parseInt(reader.readLine());
                 reader.close();
-                writer = new BufferedWriter(new FileWriter("nextCodici.txt"));
+                writer = new BufferedWriter(new FileWriter("src\\nextCodici.txt"));
                 writer.write(Integer.toString((nextCodice + 1)) + "\n");
                 writer.append(Integer.toString(codiceLotto) + "\n");
                 writer.append(Integer.toString(codiceOggetto));
@@ -68,11 +68,11 @@ public class GestoreAste implements Serializable{
             return lottiInAsta.size();
         }
 
-        public void replaceLotto(Lotto l, int idLotto) throws IOException{
-            for(Lotto ll: lottiInAsta){
-                if(ll.getID() == idLotto){
-                    int index = lottiInAsta.indexOf(ll);
-                    lottiInAsta.set(index, l);
+        public void replaceLotto(Lotto lotto, int idLotto) throws IOException{
+            for(Lotto l: lottiInAsta){
+                if(l.getID() == idLotto){
+                    int index = lottiInAsta.indexOf(l);
+                    lottiInAsta.set(index, lotto);
                     return;
                 }
             }
@@ -117,10 +117,10 @@ public class GestoreAste implements Serializable{
         throw new IOException("Asta non presente");
     }
 
-    public void replace(Asta a, int idAsta) throws IOException{
+    public void replace(Asta asta, int idAsta) throws IOException{
         for(int i = 0; i < aste.size(); i++){
             if(aste.get(i).getID() == idAsta){
-                aste.set(i,a);
+                aste.set(i,asta);
                 return;
             }
         }
@@ -174,11 +174,11 @@ public class GestoreAste implements Serializable{
 
     public void serializza(){
         try {
-            ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("aste.bin"));
+            ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("src\\aste.bin"));
             output.writeObject(aste);
             output.close();
         } catch (FileNotFoundException e){
-            File file = new File("aste.bin");
+            File file = new File("src\\aste.bin");
             try {
                 file.createNewFile();
                 serializza();
@@ -192,7 +192,7 @@ public class GestoreAste implements Serializable{
         try {
             FileInputStream fileInput = null;
             try{
-                fileInput = new FileInputStream("aste.bin");
+                fileInput = new FileInputStream("src\\aste.bin");
             }catch(IOException ignore){
             }
             ObjectInputStream input = new ObjectInputStream(fileInput);
