@@ -73,6 +73,7 @@ public class GestoreAste implements Serializable{
                 if(ll.getID() == idLotto){
                     int index = lottiInAsta.indexOf(ll);
                     lottiInAsta.set(index, l);
+                    return;
                 }
             }
             throw new IOException("Lotto non presente");

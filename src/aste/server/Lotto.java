@@ -42,7 +42,7 @@ public class Lotto implements Serializable{
         }
 
         ID_LOTTO = nextCodice;
-        indirizzoMulticast = InetAddress.getByName("127.0.0." + ID_LOTTO);
+        indirizzoMulticast = InetAddress.getByName("224.0.1." + ID_LOTTO);
         this.nomeLotto = nomeLotto;
         this.prezzoBase = prezzoBase;
         this.rilancioMinimo = rilancioMinimo;

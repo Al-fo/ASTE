@@ -32,8 +32,10 @@ public class Client {
                         } 
                         switch(scelta){
                             case 0:{
-                                System.out.println("Inserisci Nome, Cognome, email, password, numero di telefono");
+                                System.out.println("Inserisci Nome, Cognome, email, password, numero di telefono ('NO' per annullare)");
                                 String nome = scanner.nextLine();
+                                if(nome.equalsIgnoreCase("NO")) 
+                                    break;
                                 String cognome = scanner.nextLine();
                                 String email = scanner.nextLine();
                                 String password = scanner.nextLine();
@@ -61,8 +63,10 @@ public class Client {
                                 break;
                             }
                             case 1:{
-                                System.out.println("Inserisci email, password");
+                                System.out.println("Inserisci email, password ('NO' per annullare)");
                                 String email = scanner.nextLine();
+                                if(email.equalsIgnoreCase("NO")) 
+                                    break;
                                 String password = scanner.nextLine();
                                 writer.writeBytes("-Login|" + email + "|" + password + "\n");
                                 String risposta;
@@ -396,7 +400,7 @@ public class Client {
                                         for(int i = 0; i < threadPool.size(); i++){
                                             ThreadMulticast t = threadPool.get(i);
                                             if(t.getIndirizzo().toString().contains(indirizzo)){
-                                                t.interrupt();
+                                                threadPool.get(i).interrupt();
                                                 break leavegroup;
                                             }
                                         }

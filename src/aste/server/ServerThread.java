@@ -21,7 +21,6 @@ import aste.server.GestoreAste.Asta;
 
 public class ServerThread extends Thread{
     private Socket socket;
-    private String fileUtenti = "utenti";
 
     public ServerThread(Socket socket) throws IOException{
         this.socket = socket;
@@ -257,6 +256,7 @@ public class ServerThread extends Thread{
                                             l.effettuaRilancio(valoreAttuale, new String(u.getNome() + " " +  u.getCognome()));
                                         }catch(IOException e){
                                             writer.writeBytes("[ER]" + e.getMessage() + "\n");
+                                            e.printStackTrace();
                                             break switchcase;
                                         }
                                         a.replaceLotto(l, idLotto);
@@ -265,6 +265,7 @@ public class ServerThread extends Thread{
                                         Server.gestoreAste.serializza();
                                         writer.writeBytes("[OK]\n");
                                     }catch(IOException e){
+                                        e.printStackTrace();
                                         writer.writeBytes("[ER]AstaLotto\n");
                                         break switchcase;
                                     }
@@ -335,7 +336,7 @@ public class ServerThread extends Thread{
         ArrayList<String[]> listaStringhe = new ArrayList<>();
         ArrayList<Utente> listaUtenti = new ArrayList<>();
         try{
-            fileReader = new BufferedReader(new FileReader(fileUtenti + ".txt"));
+            fileReader = new BufferedReader(new FileReader(Server.fileUtenti + ".txt"));
             while(fileReader.ready()){
                 String[] datiLetti = fileReader.readLine().split("\\|");
                 listaStringhe.add(datiLetti);
@@ -346,14 +347,14 @@ public class ServerThread extends Thread{
             }
             return listaUtenti;
         }catch(FileNotFoundException e){
-            File file = new File(fileUtenti + ".txt");
+            File file = new File(Server.fileUtenti + ".txt");
             file.createNewFile();
             return listaUtenti;
         }
     }
 
     private void salvaUtenti(ArrayList<Utente> lista) throws IOException{
-        BufferedWriter fileWriter = new BufferedWriter(new FileWriter(fileUtenti + ".txt"));
+        BufferedWriter fileWriter = new BufferedWriter(new FileWriter(Server.fileUtenti + ".txt"));
         for(Utente u: lista){
             fileWriter.write(u.toString());
             fileWriter.newLine();
