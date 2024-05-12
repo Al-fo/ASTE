@@ -32,11 +32,13 @@ public class Lotto implements Serializable{
             int codiceAsta = Integer.parseInt(reader.readLine());
             nextCodice = Integer.parseInt(reader.readLine());
             int codiceOggetto = Integer.parseInt(reader.readLine());
+            int codiceUtente = Integer.parseInt(reader.readLine());
             reader.close();
             writer = new BufferedWriter(new FileWriter("src\\nextCodici.txt"));
             writer.write(Integer.toString(codiceAsta) + "\n");
             writer.append(Integer.toString((nextCodice + 1)) + "\n");
-            writer.append(Integer.toString(codiceOggetto));
+            writer.append(Integer.toString(codiceOggetto) + "\n");
+            writer.append(Integer.toString(codiceUtente));
             writer.close();
         }catch(IOException ignore){
         }

@@ -1,8 +1,13 @@
 package aste.server;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Utente {
     public final int ID;
-    private static int nextID = 0;
     private String nome;
     private String cognome;
     private String email;
@@ -12,8 +17,27 @@ public class Utente {
     private boolean admin;
 
     public Utente(String nome, String cognome, String email, String password, String telefono){
-        ID = nextID;
-        nextID++;
+        int nextCodice = Integer.MAX_VALUE;
+        BufferedWriter writer;
+        BufferedReader reader;
+
+        try{
+            reader = new BufferedReader(new FileReader("src\\nextCodici.txt"));
+            int codiceAsta = Integer.parseInt(reader.readLine());
+            int codiceLotto = Integer.parseInt(reader.readLine());
+            int codiceOggetto = Integer.parseInt(reader.readLine());
+            nextCodice = Integer.parseInt(reader.readLine());
+            reader.close();
+            writer = new BufferedWriter(new FileWriter("src\\nextCodici.txt"));
+            writer.write(Integer.toString(codiceAsta) + "\n");
+            writer.append(Integer.toString(codiceLotto) + "\n");
+            writer.append(Integer.toString(codiceOggetto) + "\n");
+            writer.append(Integer.toString(nextCodice + 1));
+            writer.close();
+        }catch(IOException ignore){
+        }
+
+        ID = nextCodice;
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
