@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Client implements Runnable{
@@ -30,7 +31,12 @@ public class Client implements Runnable{
                 connessione: while(true){
                     while(!loggedIn && scelta >= 0 && scelta <= 1){
                         System.out.println("0: Registrati\n1: Login\n2: Esci");
-                        scelta = scanner.nextInt();
+                        try{
+                            scelta = scanner.nextInt();
+                        }catch(InputMismatchException e){
+                            System.out.println("Errore: Valore inserito errato");
+                            scelta = 43829402;
+                        }
                         scanner.nextLine();
                         if(scelta == 2){
                             loggedIn = false;
@@ -57,7 +63,12 @@ public class Client implements Runnable{
                                 scelta = 0;
                             }else{
                                 System.out.println("0: Logout\n1: Richiedi lista aste\n" + "2: Crea asta\n" + "3: Chiudi asta");
-                                scelta = scanner.nextInt();
+                                try{
+                                    scelta = scanner.nextInt();
+                                }catch(InputMismatchException e){
+                                    System.out.println("Errore: Valore inserito errato");
+                                    scelta = 432482;
+                                }
                                 scanner.nextLine();
                             }
                             if(scelta == 0){
@@ -77,6 +88,7 @@ public class Client implements Runnable{
                                     chiudiAsta(reader, writer, scanner);
                                     break;
                                 }
+                                default: break;
                             }
                         }
                     }else{
@@ -87,7 +99,12 @@ public class Client implements Runnable{
                             }else{
                                 System.out.println("0: Logout\n1: Richiedi lista aste\n2: Inserisci lotto\n" + 
                                 "3: Entra gruppo lotto\n4: Esci gruppo lotto\n5: Effettua rilancio");
-                                scelta = scanner.nextInt();
+                                try{
+                                    scelta = scanner.nextInt();
+                                }catch(InputMismatchException e){
+                                    System.out.println("Errore: Valore inserito errato");
+                                    scelta = 3129;
+                                }
                                 scanner.nextLine();
                             }
     
@@ -116,6 +133,7 @@ public class Client implements Runnable{
                                     effettuaRilancio(reader, writer, scanner);
                                     break;
                                 }
+                                default: break;
                             }
                         }
                     }
@@ -148,7 +166,11 @@ public class Client implements Runnable{
                     System.out.println("L'utente è già registrato");
                     break;
                 case "Dati":
-                    System.out.println("Errore nei dati inseriti");
+                    System.out.println(
+                        "Errore nei dati inseriti\n"+
+                        "(Possibili errori: La password deve contenere almeno una minuscola, una maiuscola e un numero)\n" +
+                        "(Nome e cognome non possono contenere numeri)"
+                    );
                     break;
                 default:
                     System.out.println("Errore, si prega di riprovare");
@@ -260,7 +282,13 @@ public class Client implements Runnable{
         risposta = reader.readLine();
         if(risposta.contains("[OK]")){
             System.out.println("Inserisci l'id dell'asta da chiudere");
-            int idAsta = scanner.nextInt();
+            int idAsta = 0;
+            try{
+                idAsta = scanner.nextInt();
+            }catch(InputMismatchException e){
+                System.out.println("Errore: Valore inserito errato");
+                return;
+            }
             scanner.nextLine();
             writer.writeBytes(idAsta + "\n");
             risposta = reader.readLine();
@@ -305,10 +333,22 @@ public class Client implements Runnable{
         String risposta = reader.readLine();
         if(risposta.contains("[OK]")){
             System.out.println("Inserisci la quantità di oggetti da inserire");
-            int numOggetti = scanner.nextInt();
+            int numOggetti;
+            try{
+                numOggetti = scanner.nextInt();
+            }catch(InputMismatchException e){
+                System.out.println("Errore: Valore inserito errato");
+                return;
+            }
             scanner.nextLine();
             System.out.println("Inserisci l'id dell'asta in cui inserire il lotto");
-            int idAsta = scanner.nextInt();
+            int idAsta = 0;
+            try{
+                idAsta = scanner.nextInt();
+            }catch(InputMismatchException e){
+                System.out.println("Errore: Valore inserito errato");
+                return;
+            }
             scanner.nextLine();
             writer.writeBytes(numOggetti + "|" + idAsta + "\n");
             risposta = reader.readLine();
@@ -321,7 +361,12 @@ public class Client implements Runnable{
                 String nome = "";
                 String desc = "";
                 for(int i = 0; i < numOggetti; i++){
-                    categoria = scanner.nextInt();
+                    try{
+                        categoria = scanner.nextInt();
+                    }catch(InputMismatchException e){
+                        System.out.println("Errore: Valore inserito errato");
+                        return;
+                    }
                     scanner.nextLine();
                     nome = scanner.nextLine();
                     desc = scanner.nextLine();
@@ -427,10 +472,22 @@ public class Client implements Runnable{
         risposta = reader.readLine();
         if(risposta.contains("[OK]")){
             System.out.println("Inserisci l'id (ultimo punto) del lotto su cui rilanciare");
-            int idLotto = scanner.nextInt();
+            int idLotto = 0;
+            try{
+                idLotto = scanner.nextInt();
+            }catch(InputMismatchException e){
+                System.out.println("Errore: Valore inserito errato");
+                return;
+            }
             scanner.nextLine();
             System.out.println("Inserisci l'id dell'asta su cui si trova il lotto");
-            int idAsta = scanner.nextInt();
+            int idAsta = 0;
+            try{
+                idAsta = scanner.nextInt();
+            }catch(InputMismatchException e){
+                System.out.println("Errore: Valore inserito errato");
+                return;
+            }
             scanner.nextLine();
             System.out.println("Inserisci quanto rilanciare sul lotto");
             double rilancio = scanner.nextDouble();

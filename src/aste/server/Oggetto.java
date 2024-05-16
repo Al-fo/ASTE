@@ -15,7 +15,7 @@ public class Oggetto implements Serializable{
     enum CATEGORIE{
         ELETTRONICA, ABBIGLIAMENTO, ELETTRODOMESTICI,
         BAMBINI, GIARDINAGGIO, SCOLASTICO, LAVORO, 
-        CUCINA;
+        CUCINA, ALTRO;
 
         public static CATEGORIE getCategoriaByValue(int value){
             switch(value){
@@ -35,7 +35,7 @@ public class Oggetto implements Serializable{
                     return LAVORO;
                 case 7:
                     return CUCINA;
-                default: return null;
+                default: return ALTRO;
             }
         }
     };

@@ -16,6 +16,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import aste.server.GestoreAste.Asta;
 
@@ -54,7 +56,24 @@ public class ServerThread extends Thread{
                             String tel = dati[4];
 
                             //TODO: Controlli sui dati
-    
+                            String[] patterns = {
+                                "\\b[A-Z]*[a-z]*\\b", "\\b[A-Z]*[a-z]*\\b", 
+                                "^[^.\\r\\n\\t\\f @()<>,;:\"]+\\.?[\\w]+\\@([a-z0-9]+-*[a-z0-9]+\\.)+[a-z-*]{2,6}$", 
+                                "^[a-zA-Z0-9]*[a-z]+[A-Z]+[0-9]+$", 
+                                "^([+][0-9]{2} ){0,1}[0-9]{10}$"
+                            };
+
+                            Pattern inputDesiderato = Pattern.compile("");
+                            boolean found = true;
+                            Matcher match;
+                            for(int i = 0; i < 5; i++){
+                                inputDesiderato = Pattern.compile(patterns[i]);
+                                match = inputDesiderato.matcher(dati[i]);
+                                found = match.matches();
+                            }
+                            if(!found){
+                                writer.writeBytes("[ER]Dati\n");
+                            }
                             System.out.println("dati ricevuti");
     
                             ArrayList<Utente> listaUtenti = leggiUtenti();
