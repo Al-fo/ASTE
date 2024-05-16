@@ -55,12 +55,11 @@ public class ServerThread extends Thread{
                             String password = dati[3];
                             String tel = dati[4];
 
-                            //TODO: Controlli sui dati
                             String[] patterns = {
-                                "\\b[A-Z]*[a-z]*\\b", "\\b[A-Z]*[a-z]*\\b", 
+                                "^([A-Z]*[a-z]+)+$", "^([A-Z]*[a-z]+)+$", 
                                 "^[^.\\r\\n\\t\\f @()<>,;:\"]+\\.?[\\w]+\\@([a-z0-9]+-*[a-z0-9]+\\.)+[a-z-*]{2,6}$", 
                                 "^[a-zA-Z0-9]*[a-z]+[A-Z]+[0-9]+$", 
-                                "^([+][0-9]{2} ){0,1}[0-9]{10}$"
+                                "^([+][0-9]{2} )?[0-9]{10}$"
                             };
 
                             Pattern inputDesiderato = Pattern.compile("");
@@ -73,6 +72,7 @@ public class ServerThread extends Thread{
                             }
                             if(!found){
                                 writer.writeBytes("[ER]Dati\n");
+                                break switchcase;
                             }
                             System.out.println("dati ricevuti");
     
